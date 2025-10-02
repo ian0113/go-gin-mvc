@@ -1,0 +1,58 @@
+version: '3.1'
+
+networks:
+  dev_backend_network:
+
+services:
+
+  go-gin-mvc:
+    container_name: go-gin-mvc.mysql
+    image: go-gin-mvc:0.1
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    networks:
+      - dev_backend_network
+
+  mysql:
+    container_name: go-gin-mvc.mysql
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: defaultdb
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    expose:
+      - 3306
+    networks:
+      - dev_backend_network
+
+  adminer:
+    container_name: go-gin-mvc.adminer
+    image: adminer
+    restart: always
+    ports:
+      - "8081:8080"
+    networks:
+      - dev_backend_network
+
+  redis:
+    container_name: go-gin-mvc.redis
+    image: redis:7
+    restart: always
+    expose:
+      - 6379
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "mypassword"] # 開啟 AOF 持久化
+    networks:
+      - dev_backend_network
+
+  redisinsight:
+    container_name: go-gin-mvc.redisinsight
+    image: redis/redisinsight:latest
+    restart: always
+    networks:
+      - dev_backend_network
+    ports:
+      - "5540:5540"
