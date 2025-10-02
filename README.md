@@ -122,3 +122,85 @@ docker run -p 8080:8080 go-gin-mvc
 http://localhost:8080
 ```
 
+也可以透過 curl + jq 去測試
+
+```bash
+
+### Register
+echo "* Register ========"
+res=$(
+    curl -s \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -d '
+    {
+        "name": "Test User",
+        "account": "test123",
+        "email": "test@example.com",
+        "password": "123456"
+    }
+    ' \
+    http://localhost:8080/api/users \
+)
+echo $res | jq .
+USER_ID=$(echo "$res" | jq -r '.id')
+
+### Login
+echo "* Login ========"
+res=$(curl -s \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -d '
+    {
+        "account": "test123",
+        "password": "123456"
+    }
+    ' \
+    http://localhost:8080/api/auth/login \
+)
+echo $res | jq .
+ACCESS_TOKEN=$(echo "$res" | jq -r '.access_token')
+REFRESH_TOKEN=$(echo "$res" | jq -r '.refresh_token')
+
+### Create Order
+echo "* Create Order ========"
+res=$(curl -s \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
+    -d "
+    {
+        \"user_id\": $USER_ID,
+        \"item\": \"Tickets\",
+        \"amount\": 100
+    }
+    " \
+    http://localhost:8080/api/orders \
+)
+echo $res | jq .
+
+### List Order
+echo "* List Order ========"
+res=$(curl -s \
+    -X GET \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
+    http://localhost:8080/api/orders \
+)
+echo $res | jq .
+
+### Logout
+echo "* Logout ========"
+res=$(curl -s \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
+    -d "
+    {
+        \"refresh_token\": \"$REFRESH_TOKEN\"
+    }
+    " \
+    http://localhost:8080/api/auth/logout \
+)
+echo $res | jq .
+```
