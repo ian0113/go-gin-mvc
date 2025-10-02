@@ -6,12 +6,16 @@ networks:
 services:
 
   go-gin-mvc:
-    container_name: go-gin-mvc.mysql
+    container_name: go-gin-mvc
     image: go-gin-mvc:0.1
+    restart: always
     build:
       context: .
     ports:
       - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
     networks:
       - dev_backend_network
 

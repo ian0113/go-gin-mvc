@@ -21,7 +21,7 @@ var (
 	globalDefaultAppConfig = AppConfig{
 		Name:     "TEST_PROJECT",
 		Mode:     AppModeProduction,
-		HostName: "127.0.0.1",
+		HostName: "0.0.0.0",
 		HostPort: 8080,
 	}
 	_ SubConfigInf = &AppConfig{}
