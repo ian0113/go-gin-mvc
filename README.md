@@ -102,7 +102,7 @@ main.go
 docker-compose up --build
 ```
 
-### 手動執行（不用 compose, 但你得自己建 DB/Redis, 並修改 config）
+<!-- ### 手動執行（不用 compose, 但你得自己建 DB/Redis, 並修改 config）
 
 建立映像
 
@@ -114,7 +114,7 @@ docker build -t go-gin-mvc .
 
 ```
 docker run -p 8080:8080 go-gin-mvc
-```
+``` -->
 
 啟動完成後，你可以在瀏覽器或 Postman 訪問：
 
